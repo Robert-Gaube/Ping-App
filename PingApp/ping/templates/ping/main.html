@@ -1,30 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Test</title>
+        <meta http-equiv="refresh" content="5">
+        <title>Ping Status</title>
         <style>
             * {
                 padding: 0;
                 margin: 0;
                 font-family: sans-serif;
             }
+            table, tr{
+                border-collapse: collapse;
+                border: 1px solid black;
+                width: 100%;
+            }
+            th {
+                padding: 10px 20px 10px 20px;
+            }
+            #True {
+                background-color: green;
+            }
+            #False {
+                background-color: red;
+            }
+            #Uefi {
+                background-color: blue;
+            }
+            section {
+                float: left;
+                width: 24vw;
+                font-size: 17px;
+            }
+            header a {
+                text-decoration: none;
+                color: black;
+                transition: all 0.2s;
+            }
+            header a:hover {
+                color:brown;
+            }
+            header {
+                height: 5vh;
+            }
         </style>
     </head>
     <body>
-        <h1>Title</h1>
-        <table cellspacing="30">
-            <tr>
-                <th>NAME</th>
-                <th>IP</th>
-                <th>PING STATUS</th>
-            </tr>
-            {% for setup in list %}
+        <header>
+            <table>
                 <tr>
-                    <th>{{ setup.name }}</th>
-                    <th>{{ setup.ip }}</th>
-                    <th>{{ setup.ping_status }}</th>
+                    <th><a href="/online">Online</a></th>
+                    <th><a href="/all">All</a></th>
+                    <th><a href="/offline">Offline</a></th>
+                    <th><a href="/uefi">Uefi</a></th>
                 </tr>
-            {% endfor %}
-        </table>
+            </table>
+        </header>
+        {% for col in cols %}
+            <section>
+                <table>
+                    <tr>
+                        <th>NAME</th>
+                        <th>IP</th>
+                        <th>STATUS</th>
+                    </tr>
+                    {% for setup in col %}
+                        <tr>
+                            <th>{{ setup.name }}</th>
+                            <th>{{ setup.ip }}</th>
+                            <th id = '{{ setup.ping_status }}'></th>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </section>
+        {% endfor %}
     </body>
 </html>

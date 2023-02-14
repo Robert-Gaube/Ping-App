@@ -5,6 +5,8 @@ import subprocess
 import platform
 from .models import Setup
 
+NO_ENTRIES_PER_COL = 22
+
 def ping(ip):
     try:
         output = subprocess.check_output(
@@ -18,19 +20,115 @@ def ping(ip):
         return False
 
 def index(request):
+    return render(request, 'ping/index.html')
+
+def all(request):
     setups = Setup.objects.all()
+    no_setups = setups.count()
+    cols = []
     list = []
+
+    counter = 0
     for setup in setups:
+        if counter == NO_ENTRIES_PER_COL:
+            counter = 0
+            cols.append(list)
+            list = []
         ip = getattr(setup, 'ip')
         name = getattr(setup, 'name')
-        ping_status = ping(ip)
-        list.append({'name' : name, 'ip' : ip, 'ping_status' : ping_status})
-
-    print(list)
+        uefi = getattr(setup, 'uefi')
+        if uefi:
+            list.append({'name' : name, 'ip' : ip, 'ping_status' : 'Uefi'})
+        else:    
+            ping_status = ping(ip)
+            list.append({'name' : name, 'ip' : ip, 'ping_status' : ping_status})
+        counter = counter + 1
+        
+    cols.append(list)
     return render(request, 'ping/main.html', {
-        'list' : list
+        'cols' : cols
     })
     
+def online(request):
+    setups = Setup.objects.all()
+    no_setups = setups.count()
+    cols = []
+    list = []
+
+    counter = 0
+    for setup in setups:
+        if counter == NO_ENTRIES_PER_COL:
+            counter = 0
+            cols.append(list)
+            list = []
+        ip = getattr(setup, 'ip')
+        name = getattr(setup, 'name')
+        uefi = getattr(setup, 'uefi')
+        if uefi:
+            continue
+        else:    
+            ping_status = ping(ip)
+            if ping_status:
+                list.append({'name' : name, 'ip' : ip, 'ping_status' : ping_status})
+                counter = counter + 1
+        
+    cols.append(list)
+    return render(request, 'ping/main.html', {
+        'cols' : cols
+    })
+    
+def offline(request):
+    setups = Setup.objects.all()
+    no_setups = setups.count()
+    cols = []
+    list = []
+
+    counter = 0
+    for setup in setups:
+        if counter == NO_ENTRIES_PER_COL:
+            counter = 0
+            cols.append(list)
+            list = []
+        ip = getattr(setup, 'ip')
+        name = getattr(setup, 'name')
+        uefi = getattr(setup, 'uefi')
+        if uefi:
+            continue
+        else:    
+            ping_status = ping(ip)
+            if not ping_status:
+                list.append({'name' : name, 'ip' : ip, 'ping_status' : ping_status})
+                counter = counter + 1
+        
+    cols.append(list)
+    return render(request, 'ping/main.html', {
+        'cols' : cols
+    })
+
+def uefi(request):
+    setups = Setup.objects.all()
+    no_setups = setups.count()
+    cols = []
+    list = []
+
+    counter = 0
+    for setup in setups:
+        if counter == NO_ENTRIES_PER_COL:
+            counter = 0
+            cols.append(list)
+            list = []
+        ip = getattr(setup, 'ip')
+        name = getattr(setup, 'name')
+        uefi = getattr(setup, 'uefi')
+        if uefi:
+            list.append({'name' : name, 'ip' : ip, 'ping_status' : 'Uefi'})
+            counter = counter + 1
+        
+    cols.append(list)
+    return render(request, 'ping/main.html', {
+        'cols' : cols
+    })
+
 def create(request):
     list = []
 
@@ -38,9 +136,14 @@ def create(request):
         for line in file.readlines():
             words = line.split(' ')
             words[1] = words[1].replace('\n', '')
-            list.append(f'{words[0]} with ip: {words[1]} inserted succesfully')
             setup = Setup(name=words[0], ip=words[1])
-            setup.save()
+            try:
+                setup.save()
+                list.append(f'{words[0]} with ip: {words[1]} inserted succesfully')
+            except:
+                list.append(f'{words[0]} with ip: {words[1]} was not inserted because it already exists')
+                
+                
     return render(request, 'ping/create.html', {
         'list' : list
     })
