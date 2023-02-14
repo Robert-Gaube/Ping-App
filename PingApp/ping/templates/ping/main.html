@@ -2,9 +2,29 @@
 <html lang="en">
     <head>
         <title>Test</title>
+        <style>
+            * {
+                padding: 0;
+                margin: 0;
+                font-family: sans-serif;
+            }
+        </style>
     </head>
     <body>
         <h1>Title</h1>
-        <h2>{{ text }}</h2>
+        <table cellspacing="30">
+            <tr>
+                <th>NAME</th>
+                <th>IP</th>
+                <th>PING STATUS</th>
+            </tr>
+            {% for setup in list %}
+                <tr>
+                    <th>{{ setup.name }}</th>
+                    <th>{{ setup.ip }}</th>
+                    <th>{{ setup.ping_status }}</th>
+                </tr>
+            {% endfor %}
+        </table>
     </body>
 </html>

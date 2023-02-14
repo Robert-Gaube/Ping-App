@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseNotFound
 import subprocess
 import platform
-from . import models
+from .models import Setup
 
 def ping(ip):
     try:
@@ -18,11 +18,29 @@ def ping(ip):
         return False
 
 def index(request):
-    try:
-        
-        return render(request, 'ping/main.html', {
-            'text' : 'text1'
-        })
-    except:
-        return HttpResponseNotFound('<h1>Error finding page </h1>')
+    setups = Setup.objects.all()
+    list = []
+    for setup in setups:
+        ip = getattr(setup, 'ip')
+        name = getattr(setup, 'name')
+        ping_status = ping(ip)
+        list.append({'name' : name, 'ip' : ip, 'ping_status' : ping_status})
+
+    print(list)
+    return render(request, 'ping/main.html', {
+        'list' : list
+    })
     
+def create(request):
+    list = []
+
+    with open('ping\\data\\data.txt', 'r') as file:
+        for line in file.readlines():
+            words = line.split(' ')
+            words[1] = words[1].replace('\n', '')
+            list.append(f'{words[0]} with ip: {words[1]} inserted succesfully')
+            setup = Setup(name=words[0], ip=words[1])
+            setup.save()
+    return render(request, 'ping/create.html', {
+        'list' : list
+    })

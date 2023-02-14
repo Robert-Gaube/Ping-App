@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            * {
+                padding: 0;
+                margin: 0;
+                font-family: sans-serif;
+            }
+            ul {
+                list-style: none;
+                padding: 30px;
+            }
+            li {
+                padding: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <ul>
+            {% for item in list %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>
