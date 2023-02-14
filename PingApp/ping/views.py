@@ -3,6 +3,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseNotFound
 import subprocess
 import platform
+from . import models
 
 def ping(ip):
     try:
