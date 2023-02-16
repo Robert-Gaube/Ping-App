@@ -22,14 +22,20 @@ def validate_ip(ip):
                          params={'ip':ip},
                     )
 def validate_name(name):
-     try:
-          object = Setup.objects.get(name=name)
+     parts = name.split('-')
+     if len(parts) != 4:
           raise ValidationError(
-               _('%(name)s is already in the database'),
+               _('%(name)s is not in the S-S-S-DDD format (S - text of any size, D - digit)'),
                params={'name':name},
           )
-     except:
-          pass
+     for ch in parts[3]:
+          if not ch.isdigit():
+              raise ValidationError(
+                    _('%(name)s is not in the S-S-S-DDD format (S - text of any size, D - digit)'),
+                    params={'name':name},
+               ) 
+     
+
 class Setup(models.Model):
      name = models.CharField(max_length=50, validators=[validate_name], unique=True)
      ip = models.CharField(max_length=30, validators=[validate_ip], unique=True)
@@ -37,4 +43,7 @@ class Setup(models.Model):
      
      def __str__(self):
           return f'{self.name} - {self.ip}'
+     
+
+          
           

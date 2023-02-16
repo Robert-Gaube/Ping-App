@@ -14,5 +14,6 @@ class SetupAdmin(admin.ModelAdmin):
     list_display = ['name', 'ip']
     search_fields = ['name', 'ip']
     actions = [uefi_on, uefi_off]
+    ordering = ['name']
     
 admin.site.register(Setup, SetupAdmin)

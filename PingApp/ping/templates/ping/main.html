@@ -28,7 +28,7 @@
             }
             section {
                 float: left;
-                width: 24vw;
+                width: 19.5vw;
                 font-size: 17px;
             }
             header a {
@@ -61,17 +61,24 @@
                     <tr>
                         <th>NAME</th>
                         <th>IP</th>
-                        <th>STATUS</th>
                     </tr>
                     {% for setup in col %}
                         <tr>
                             <th>{{ setup.name }}</th>
-                            <th>{{ setup.ip }}</th>
-                            <th id = '{{ setup.ping_status }}'></th>
+                            <th id="{{ setup.ping_status }}">{{ setup.ip }}</th>
                         </tr>
                     {% endfor %}
                 </table>
             </section>
         {% endfor %}
+        <header>
+            <table>
+                <tr>
+                    <th id="True">Online</th>
+                    <th id="False">Offline</th>
+                    <th id="Uefi">Uefi</th>
+                </tr>
+            </table>
+        </header>
     </body>
 </html>
